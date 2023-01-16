@@ -1,5 +1,7 @@
 package com.celalgundogdu.employeeservice.service;
 
+import com.celalgundogdu.employeeservice.dto.APIResponseDto;
+import com.celalgundogdu.employeeservice.dto.DepartmentDto;
 import com.celalgundogdu.employeeservice.dto.EmployeeDto;
 import com.celalgundogdu.employeeservice.entity.Employee;
 import com.celalgundogdu.employeeservice.exception.EmployeeNotFoundException;
@@ -11,9 +13,11 @@ import org.springframework.stereotype.Service;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final APIClient apiClient;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository, APIClient apiClient) {
         this.employeeRepository = employeeRepository;
+        this.apiClient = apiClient;
     }
 
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -22,9 +26,14 @@ public class EmployeeService {
         return EmployeeMapper.MAPPER.mapToEmployeeDto(savedEmployee);
     }
 
-    public EmployeeDto getEmployeeById(Long employeeId) {
+    public APIResponseDto getEmployeeById(Long employeeId) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new EmployeeNotFoundException("employee", "id", employeeId));
-        return EmployeeMapper.MAPPER.mapToEmployeeDto(employee);
+
+        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
+        EmployeeDto employeeDto = EmployeeMapper.MAPPER.mapToEmployeeDto(employee);
+        APIResponseDto apiResponseDto = new APIResponseDto(employeeDto, departmentDto);
+
+        return apiResponseDto;
     }
 }

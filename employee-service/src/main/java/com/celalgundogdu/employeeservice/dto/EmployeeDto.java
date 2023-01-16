@@ -29,4 +29,6 @@ public class EmployeeDto {
     @Email(message = "Invalid email")
     @UniqueEmail
     private String email;
+
+    private String departmentCode;
 }

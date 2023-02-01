@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "DEPARTMENT-SERVICE")
-public interface APIClient {
+public interface DepartmentFeignClient {
 
-    Logger logger = LoggerFactory.getLogger(APIClient.class);
+    Logger logger = LoggerFactory.getLogger(DepartmentFeignClient.class);
 
     @GetMapping("api/departments/{department-code}")
     @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
